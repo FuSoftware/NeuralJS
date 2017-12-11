@@ -1,0 +1,140 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+    #mainTable{
+        background-color:#333333;
+        border: 1px solid black;
+        width:100%;
+        margin: 0 auto;
+    }
+
+    #mainTable .test{
+        border: 1px solid black;
+        background-color:#444444;
+    }
+
+    #mainTable caption{
+        font-size: 30px;
+    }
+
+    #mainTable table caption{
+        font-size: 20px;
+        background: #555555
+
+    }
+
+    #mainTable th{
+        font-size: 30px;
+    }
+
+    #mainTable table th{
+        font-size: 20px;
+    }
+
+    #mainTable table {
+        width:100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    #mainTable canvas{
+        width:95%;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 5;
+        display: block;
+    }
+
+    </style>
+
+    <title>Testing GeneticNeural</title>
+</head>
+<body>
+    <script src="scripts/neural.js"></script>
+    <script src="scripts/utils.js"></script>
+
+    <table id="mainTable">
+        <caption>Sample Networks imitating logic gates</caption>
+        <tr>
+            <th>Normal Gates</th>
+            <th>Inverted Gates</th>
+        </tr>
+
+        <!-- AND -->
+        <tr>
+            <td><div id="AND" class="test"></div></td>
+            <td><div id="NAND" class="test"></div></td>
+        </tr>
+            <td><div id="OR" class="test"></div></td>
+            <td><div id="NOR" class="test"></div></td>
+        <!-- OR -->
+        <tr>
+        </tr>
+            <td><div id="XOR" class="test"></div></td>
+            <td><div id="XNOR" class="test"></div></td>
+            <!-- XOR -->
+        <tr>
+        </tr>
+    </table>
+
+    <script>
+
+        
+
+        function TestNetwork(canvas, network, inputs){
+            network.Process(inputs);
+            network.draw(document.getElementById("canvas" + canvas));
+        }
+
+        function Process(id, network, inputs, expected){
+
+            var outputs = [];
+
+            for(var i=0; i<10000;i++){
+                network.BackPropBatch(inputs,expected);
+                //console.log("Error : " + n.RecentAvgError);
+            }
+
+            for(var i=0;i<inputs.length;i++){
+                outputs[i] = network.Process(inputs[i]);
+            }
+            network.draw(document.getElementById("canvas"));
+
+            SetResults(id,inputs, expected, outputs);
+        }
+
+        var gInputs = [
+            [0,0],
+            [0,1],
+            [1,0],
+            [1,1]
+        ];
+        var gTopology = [2,4,4,1];
+
+        var w = 400;
+        var h = 200;
+
+        var gNetworks = [];
+        var testIDs = ["AND", "NAND", "OR", "NOR", "XOR", "XNOR"];
+        var gOutputs = [];
+
+        gOutputs["AND"] =  [[0],[0],[0],[1]];
+        gOutputs["NAND"] = [[1],[1],[1],[0]];
+        gOutputs["OR"] = [[0],[1],[1],[1]];
+        gOutputs["NOR"] = [[1],[0],[0],[0]];
+        gOutputs["XOR"] = [[0],[1],[1],[0]];
+        gOutputs["XNOR"] = [[1],[0],[0],[1]];
+
+        for(var i=0;i<testIDs.length;i++){
+            var id = testIDs[i];
+            gNetworks[id] = new NetworkBackProp(gTopology);
+            Process(id, gNetworks[id], gInputs, gOutputs[id]);
+            AddCanvas(id,w,h);
+            gNetworks[id].draw(document.getElementById('canvas' + id));
+        }        
+    </script>
+</body>
+</html>

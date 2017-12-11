@@ -1,0 +1,67 @@
+<html>
+<head>
+    
+</head>
+<body>
+    <script src="scripts/neural.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script>
+
+    function parseDataset(dataset){
+        var output = [];
+
+        if(dataset['format'] == 1){
+            output['topology'] = dataset['topology'];
+            output['epochs'] = dataset['epochs'];
+
+            output['dataset'] = [];
+            output['inputs'] = [];
+            output['outputs'] = [];
+            var tests = dataset['dataset'];
+
+            for(var i=0; i<tests.length; i++){
+                output['dataset'][i] = [];
+                output['dataset'][i][0] = tests[i]['in'];
+                output['dataset'][i][1] = tests[i]['out'];
+
+                output['inputs'][i] = tests[i]['in'];
+                output['outputs'][i] = tests[i]['out'];
+            }
+
+            
+        }
+        return output;
+    }
+
+    function train(dataset){
+
+    }
+
+    var url = window.location.href;
+    var get = parseURLParams(url);
+
+    if(get['json'] != undefined){
+        var json = JSON.parse(get['json']);
+        var ds = parseDataset(json);
+
+        var n = new NetworkBackProp(ds['topology']);
+
+        for(var i=0;i<ds['epochs'];i++){
+            n.BackPropCases(ds['dataset']);
+        }
+        
+
+        console.log(n.Process([0,0]));
+        console.log(n.Process([0,1]));
+        console.log(n.Process([1,0]));
+        console.log(n.Process([1,1]));
+    }else{
+
+    }
+        
+    </script>
+
+    <div id="debug"></div>
+    <textarea name="sJson" id="" cols="30" rows="10"></textarea>
+</body>
+</html>
